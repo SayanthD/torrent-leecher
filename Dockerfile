@@ -45,6 +45,9 @@ ENV TZ Asia/Kolkata
 # we don't have an interactive xTerm
 ENV DEBIAN_FRONTEND noninteractive
 
+# fetch and install rclone via script
+RUN curl https://rclone.org/install.sh | bash
+
 # install required packages
 RUN apt -qq install -y --no-install-recommends \
     # this package is required to fetch "contents" via "TLS"
@@ -57,7 +60,7 @@ RUN apt -qq install -y --no-install-recommends \
     mkvtoolnix \
     p7zip rar unrar zip \
     # miscellaneous helpers
-    megatools mediainfo rclone && \
+    megatools mediainfo && \
     # clean up previously installed SPC
     apt purge -y software-properties-common && \
     # clean up the container "layer", after we are done
