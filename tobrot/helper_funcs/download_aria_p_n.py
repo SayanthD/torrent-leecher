@@ -313,16 +313,16 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
                 except:
                     pass
                 #
-                msg = f"\nDownloading File: <code>{downloading_dir_name}</code>"
-                msg += f"\nSpeed: {file.download_speed_string()} 🔽 / {file.upload_speed_string()} 🔼"
-                msg += f"\nProgress: {file.progress_string()}"
-                msg += f"\nTotal Size: {file.total_length_string()}"
-                msg += f"\n<b>Info:</b>| P: {file.connections} |"
+                msg = f"\nFilename: <i>{downloading_dir_name}</i>"
+                msg += f"\nProgress: {file.progress_string()} of " \
+                    f"<b>{file.total_length_string()}</b> at " \
+                    f"{file.download_speed_string()}," \
+                    f"ETA: {file.eta_string()}"
+                msg += f"\n<b>Info:</b> P: {file.connections}"
                 if file.seeder is False:
                     """https://t.me/c/1220993104/670177"""
-                    msg += f"| S: {file.num_seeders} |"
+                    msg += f" || S: {file.num_seeders}"
                 # msg += f"\nStatus: {file.status}"
-                msg += f"\nETA: {file.eta_string()}"
                 msg += f"\n<code>/cancel {gid}</code>"
                 # LOGGER.info(msg)
                 if msg != previous_message:
