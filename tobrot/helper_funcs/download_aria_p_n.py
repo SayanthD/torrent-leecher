@@ -42,19 +42,16 @@ async def aria_start():
     # but for now, https://t.me/TrollVoiceBot?start=858
     # maybe, :\ but https://t.me/c/1374712761/1142
     aria2_daemon_start_cmd.append("--enable-rpc")
-    aria2_daemon_start_cmd.append("--follow-torrent=mem")
-    aria2_daemon_start_cmd.append("--max-connection-per-server=10")
-    aria2_daemon_start_cmd.append("--min-split-size=10M")
     aria2_daemon_start_cmd.append("--rpc-listen-all=false")
     aria2_daemon_start_cmd.append(f"--rpc-listen-port={ARIA_TWO_STARTED_PORT}")
     aria2_daemon_start_cmd.append("--rpc-max-request-size=1024M")
-    aria2_daemon_start_cmd.append("--seed-ratio=0.0")
-    aria2_daemon_start_cmd.append("--seed-time=1")
-    aria2_daemon_start_cmd.append("--split=10")
     aria2_daemon_start_cmd.append(f"--bt-stop-timeout={MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START}")
     #
-    LOGGER.info(aria2_daemon_start_cmd)
+    # added support for external config file
+    # now located at /app/aria2/aria2.conf
+    aria2_daemon_start_cmd.append("--conf-path=/app/aria2/aria2.conf")
     #
+    LOGGER.info(aria2_daemon_start_cmd)
     process = await asyncio.create_subprocess_exec(
         *aria2_daemon_start_cmd,
         stdout=asyncio.subprocess.PIPE,
