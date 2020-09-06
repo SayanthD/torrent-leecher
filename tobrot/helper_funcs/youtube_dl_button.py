@@ -86,7 +86,7 @@ async def youtube_dl_call_back(bot, update):
     )
     description = "@PublicLeech"
     if "fulltitle" in response_json:
-        description = response_json["fulltitle"][0:1021]
+        fulltitle = response_json["fulltitle"][0:1021]
         # escape Markdown and special characters
     if "description" in response_json:
         description = response_json["description"][0:1021]
@@ -182,7 +182,7 @@ async def youtube_dl_call_back(bot, update):
             user_id,
             {},
             True,
-            description
+            fulltitle
         )
         LOGGER.info(final_response)
         #
