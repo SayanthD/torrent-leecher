@@ -4,5 +4,4 @@ hachoir
 Pillow
 pyrogram
 tgcrypto
-youtube-dl
-
+youtube-dlc
