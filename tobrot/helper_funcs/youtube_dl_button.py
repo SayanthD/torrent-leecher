@@ -10,7 +10,6 @@ logging.basicConfig(
 )
 LOGGER = logging.getLogger(__name__)
 
-import asyncio
 import json
 import math
 import os
@@ -24,10 +23,11 @@ from tobrot import (
     SHOULD_USE_BUTTONS
 )
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
+from tobrot.helper_funcs.run_shell_command import run_command
 
 
 async def youtube_dl_call_back(bot, update):
-    LOGGER.info(update)
+    # LOGGER.info(update)
     cb_data = update.data
     # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, so_type = cb_data.split("|")
@@ -59,7 +59,7 @@ async def youtube_dl_call_back(bot, update):
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
         os.remove(save_ytdl_json_path)
-    except (FileNotFoundError) as e:
+    except FileNotFoundError:
         await bot.delete_messages(
             chat_id=update.message.chat.id,
             message_ids=[
@@ -145,16 +145,8 @@ async def youtube_dl_call_back(bot, update):
         command_to_exec.append("IN")
     LOGGER.info(command_to_exec)
     start = datetime.now()
-    process = await asyncio.create_subprocess_exec(
-        *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
+    t_response, e_response = await run_command(command_to_exec)
     # Wait for the subprocess to finish
-    stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
-    t_response = stdout.decode().strip()
     # LOGGER.info(e_response)
     # LOGGER.info(t_response)
     ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
@@ -168,11 +160,12 @@ async def youtube_dl_call_back(bot, update):
         # LOGGER.info(t_response)
         # os.remove(save_ytdl_json_path)
         end_one = datetime.now()
-        time_taken_for_download = (end_one -start).seconds
+        time_taken_for_download = (end_one - start).seconds
         dir_contents = len(os.listdir(tmp_directory_for_each_user))
         # dir_contents.sort()
         await update.message.edit_caption(
-            caption=f"found {dir_contents} files"
+            caption=f"Download completed in {time_taken_for_download} seconds"
+                    f"\nfound {dir_contents} file(s)"
         )
         user_id = update.from_user.id
         #
@@ -188,6 +181,6 @@ async def youtube_dl_call_back(bot, update):
         #
         try:
             shutil.rmtree(tmp_directory_for_each_user)
-        except:
+        except OSError:
             pass
         #

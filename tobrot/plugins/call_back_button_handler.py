@@ -25,7 +25,7 @@ async def button(bot, update: CallbackQuery):
 
     await update.answer()
     cb_data = update.data
-    
+
     if cb_data.startswith("leech"):
         await leech_btn_k(update.message, cb_data)
 

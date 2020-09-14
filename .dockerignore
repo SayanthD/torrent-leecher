@@ -1,0 +1,14 @@
+.git*
+.dockerignore
+venv
+config.py
+__pycache__
+*.session
+*.log
+*.conf
+Pipfile*
+Dockerfile
+COPYING
+README.md
+app.json
+heroku.yml

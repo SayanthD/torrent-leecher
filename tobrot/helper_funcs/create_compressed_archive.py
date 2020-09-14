@@ -10,9 +10,9 @@ logging.basicConfig(
 )
 LOGGER = logging.getLogger(__name__)
 
-import asyncio
 import os
 import shutil
+from tobrot.helper_funcs.run_shell_command import run_command
 
 
 async def create_archive(input_directory):
@@ -26,26 +26,18 @@ async def create_archive(input_directory):
             compressed_file_name = base_dir_name[0:(64 - suffix_extention_length)]
             compressed_file_name += ".tar.gz"
         # fix for https://t.me/c/1434259219/13344
-        file_genertor_command = [
+        file_generator_command = [
             "tar",
             "-zcvf",
             compressed_file_name,
             f"{input_directory}"
         ]
-        process = await asyncio.create_subprocess_exec(
-            *file_genertor_command,
-            # stdout must a pipe to be accessible as process.stdout
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
+        t_response, e_response = await run_command(file_generator_command)
         # Wait for the subprocess to finish
-        stdout, stderr = await process.communicate()
-        e_response = stderr.decode().strip()
-        t_response = stdout.decode().strip()
         if os.path.exists(compressed_file_name):
             try:
                 shutil.rmtree(input_directory)
-            except:
+            except NotADirectoryError:
                 pass
             return_name = compressed_file_name
     return return_name

@@ -12,6 +12,7 @@ from tobrot import (
 )
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
 from tobrot.helper_funcs.create_compressed_archive import create_archive
+from tobrot.helper_funcs.run_shell_command import run_command
 
 from tobrot import (
     ARIA_TWO_STARTED_PORT,
@@ -49,14 +50,9 @@ async def aria_start():
     aria2_daemon_start_cmd.append("--conf-path=/app/aria2/aria2.conf")
     #
     LOGGER.info(aria2_daemon_start_cmd)
-    process = await asyncio.create_subprocess_exec(
-        *aria2_daemon_start_cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-    stdout, stderr = await process.communicate()
-    LOGGER.info(stdout)
-    LOGGER.info(stderr)
+    t_response, e_response = await run_command(aria2_daemon_start_cmd)
+    LOGGER.info(t_response)
+    LOGGER.info(e_response)
     aria2 = aria2p.API(
         aria2p.Client(
             host="http://localhost",
@@ -169,7 +165,7 @@ async def fake_etairporpa_call(
         R_CLONE_CONF_URI,
         sent_message_to_update_tg_p._client
     )
-    if r_clone_conf_file is not None: # how? even :\
+    if r_clone_conf_file is not None:  # how? even :\
         config = configparser.ConfigParser()
         config.read(r_clone_conf_file)
         remote_names = config.sections()
@@ -310,7 +306,7 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
                 msg = f"\nFilename: <i>{downloading_dir_name}</i>"
                 msg += f"\nProgress: {file.progress_string()} of " \
                     f"<b>{file.total_length_string()}</b> at " \
-                    f"{file.download_speed_string()}," \
+                    f"{file.download_speed_string()}, " \
                     f"ETA: {file.eta_string()}"
                 msg += f"\n<b>Info:</b> P: {file.connections}"
                 if file.seeder is False:
@@ -333,8 +329,6 @@ async def check_progress_for_dl(aria2, gid, event, previous_message):
         else:
             await event.edit(f"File Downloaded Successfully: <code>{file.name}</code>")
             return True
-    except aria2p.client.ClientException:
-        pass
     except MessageNotModified:
         pass
     except RecursionError:
