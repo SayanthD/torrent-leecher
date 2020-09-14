@@ -48,7 +48,7 @@ RUN apt update \
 	# this package is required to fetch "contents" via "TLS"
 	apt-transport-https \
 	# install coreutils
-	coreutils aria2 jq pv \
+	coreutils aria2 jq pv procps \
 	# install encoding tools
 	ffmpeg \
 	# install extraction tools

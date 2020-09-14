@@ -37,51 +37,27 @@ async def status_message_f(client, message):
     #
     msg = ""
     for download in downloads:
-        downloading_dir_name = "NA"
-        try:
-            downloading_dir_name = str(download.name)
-        except:
-            pass
-        total_length_size = str(download.total_length_string())
-        progress_percent_string = str(download.progress_string())
-        down_speed_string = str(download.download_speed_string())
-        up_speed_string = str(download.upload_speed_string())
-        download_current_status = str(download.status)
-        e_t_a = str(download.eta_string())
-        current_gid = str(download.gid)
-        #
-        msg += f"<u>{downloading_dir_name}</u>"
-        msg += " | "
-        msg += f"{total_length_size}"
-        msg += " | "
-        msg += f"{progress_percent_string}"
-        msg += " | "
-        msg += f"{DOWNLOAD_ICON} {down_speed_string}"
-        msg += " | "
-        msg += f"{UPLOAD_ICON} {up_speed_string}"
-        msg += " | "
-        msg += f"{e_t_a}"
-        msg += " | "
-        msg += f"{download_current_status}"
-        msg += " | "
-        msg += f"<code>{Commandi.CANCEL} {current_gid}</code>"
-        msg += " | "
+        msg += f"<u>{download.name}</u> |" \
+            f"{download.total_length_string()} |" \
+            f"{download.progress_string()} |" \
+            f"{DOWNLOAD_ICON} {download.download_speed_string()} |" \
+            f"{UPLOAD_ICON} {download.upload_speed_string()} |" \
+            f"{download.eta_string()}" \
+            f"{download.status} |" \
+            f"<code>{Commandi.CANCEL} {download.gid}</code> |"
         msg += "\n\n"
-    LOGGER.info(msg)
+    # LOGGER.info(msg)
 
     if msg == "":
         msg = Loilacaztion.NO_TOR_STATUS
 
     currentTime = time_formatter((time.time() - BOT_START_TIME))
     total, used, free = shutil.disk_usage(".")
-    total = humanbytes(total)
-    used = humanbytes(used)
-    free = humanbytes(free)
 
     ms_g = f"<b>Bot Uptime</b>: <code>{currentTime}</code>\n" \
-        f"<b>Total disk space</b>: <code>{total}</code>\n" \
-        f"<b>Used</b>: <code>{used}</code>\n" \
-        f"<b>Free</b>: <code>{free}</code>\n"
+        f"<b>Total disk space</b>: <code>{humanbytes(total)}</code>\n" \
+        f"<b>Used</b>: <code>{humanbytes(used)}</code>\n" \
+        f"<b>Free</b>: <code>{humanbytes(free)}</code>\n"
 
     msg = ms_g + "\n" + msg
     await message.reply_text(msg, quote=True)
@@ -114,15 +90,15 @@ async def cancel_message_f(client, message):
 
 
 async def exec_message_f(client, message):
-    DELAY_BETWEEN_EDITS = 0.3
-    PROCESS_RUN_TIME = 100
+    # DELAY_BETWEEN_EDITS = 0.3
+    # PROCESS_RUN_TIME = 100
     cmd = message.text.split(" ", maxsplit=1)[1]
 
     reply_to_id = message.message_id
     if message.reply_to_message:
         reply_to_id = message.reply_to_message.message_id
 
-    start_time = time.time() + PROCESS_RUN_TIME
+    # start_time = time.time() + PROCESS_RUN_TIME
     process = await asyncio.create_subprocess_shell(
         cmd,
         stdout=asyncio.subprocess.PIPE,
@@ -135,17 +111,13 @@ async def exec_message_f(client, message):
     o = stdout.decode()
     if not o:
         o = "😐"
-    return_code = process.returncode
     OUTPUT = ""
-    OUTPUT += "<b>EXEC</b>:\n"
-    OUTPUT += "<u>Command</u>\n"
-    OUTPUT += f"<code>{cmd}</code>\n"
-    OUTPUT += f"<u>PID</u>: <code>{process.pid}</code>\n\n"
-    OUTPUT += "<b>stderr:</b>\n"
-    OUTPUT += f"<code>{e}</code>\n\n"
-    OUTPUT += "<b>stdout:</b>\n"
-    OUTPUT += f"<code>{o}</code>\n\n"
-    OUTPUT += f"<b>return</b>: <code>{return_code}</code>"
+    OUTPUT += "<b>EXEC:</b>\n" \
+        f"<u>Command:</u> <code>{cmd}</code>\n" \
+        f"<u>PID</u>: <code>{process.pid}</code>\n" \
+        f"<b>stderr:</b>\n<code>{e}</code>\n" \
+        f"<b>stdout:</b>\n<code>{o}</code>\n" \
+        f"<b>return:</b> <code>{process.returncode}</code>"
 
     if len(OUTPUT) > MAX_MESSAGE_LENGTH:
         with open("exec.text", "w+", encoding="utf8") as out_file:
@@ -254,7 +226,7 @@ async def eval_message_f(client, message):
 
 async def aexec(code, client, message):
     exec(
-        f'async def __aexec(client, message): ' +
-        ''.join(f'\n {l}' for l in code.split('\n'))
+        'async def __aexec(client, message): ' +
+        ''.join(f'\n {line}' for line in code.split('\n'))
     )
     return await locals()['__aexec'](client, message)

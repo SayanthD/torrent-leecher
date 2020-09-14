@@ -35,17 +35,17 @@ from tobrot.helper_funcs.create_r_o_m import get_markup
 from tobrot.helper_funcs.icntaosrtsba import leech_btn_k
 from tobrot.helper_funcs.fix_tcerrocni_images import proc_ess_image_aqon
 
-        
+
 async def incoming_purge_message_f(client, message):
     """/purge command"""
     i_m_sefg2 = await message.reply_text("Purging...", quote=True)
     if await AdminCheck(client, message.chat.id, message.from_user.id):
         aria_i_p = await aria_start()
-        # Show All Downloads
-        downloads = aria_i_p.get_downloads()
-        for download in downloads:
-            LOGGER.info(download.remove(force=True))
-    await i_m_sefg2.delete()
+        try:
+            aria_i_p.remove_all(force=True)
+            await i_m_sefg2.edit_text("Purged!")
+        except False:
+            await i_m_sefg2.edit_text("Purge failed")
 
 
 async def incoming_message_f(client, message):

@@ -16,6 +16,7 @@ from tobrot import (
     LOGGER,
     DEF_THUMB_NAIL_VID_S
 )
+from tobrot.helper_funcs.run_shell_command import run_command
 
 
 async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user_working_dir):
@@ -38,17 +39,9 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
         command_to_exec.append(yt_dl_pass_word)
 
     LOGGER.info(command_to_exec)
-    process = await asyncio.create_subprocess_exec(
-        *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
+    t_response, e_response = await run_command(command_to_exec)
     # Wait for the subprocess to finish
-    stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
     # LOGGER.info(e_response)
-    t_response = stdout.decode().strip()
     # LOGGER.info(t_response)
     # https://github.com/rg3/youtube-dl/issues/2630#issuecomment-38635239
     if e_response:
@@ -121,7 +114,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                                 )
                             ]
                     else:
-                        if format_string is not None and not "audio only" in format_string:
+                        if format_string is not None and "audio only" not in format_string:
                             ikeyboard = [
                                 InlineKeyboardButton(
                                     dipslay_str_uon,
