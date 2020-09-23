@@ -24,10 +24,10 @@ RUN apt update \
 	&& apt-add-repository non-free
 
 # add required files to sources.list
-RUN wget -qO- https://mkvtoolnix.download/gpg-pub-moritzbunkus.txt | apt-key add - && \
-    wget -qO- https://ftp-master.debian.org/keys/archive-key-10.asc | apt-key add -
-RUN echo "deb https://mkvtoolnix.download/debian/ buster main" >> /etc/apt/sources.list.d/bunkus.org.list && \
-    echo deb http://deb.debian.org/debian buster main contrib non-free | tee -a /etc/apt/sources.list
+RUN curl -fsSL https://mkvtoolnix.download/gpg-pub-moritzbunkus.txt | apt-key add - && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
+    echo "deb https://mkvtoolnix.download/debian/ $(lsb_release -sc) main" >> etc/apt/sources.list.d/bunkus.org.list && \
+    echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" >> /etc/apt/sources.list
 
 # http://bugs.python.org/issue19846
 # https://github.com/SpEcHiDe/PublicLeech/pull/97
@@ -36,11 +36,11 @@ ENV LANG=C.UTF-8
 # sets the TimeZone, to be used inside the container
 ENV TZ=Asia/Kolkata
 
-# fetch and install rclone via script
-RUN curl https://rclone.org/install.sh | bash
+# copy aria2, rclone installer to /tmp
+COPY requirements.txt install-packages.sh /tmp/
 
-# copy 'requirements.txt' into the container
-COPY requirements.txt .
+# install rclone and arai2 via external scripts
+RUN bash /tmp/install-packages.sh
 
 # install required packages
 RUN apt update \
@@ -48,7 +48,7 @@ RUN apt update \
 	# this package is required to fetch "contents" via "TLS"
 	apt-transport-https \
 	# install coreutils
-	coreutils aria2 jq pv procps \
+	coreutils jq pv procps \
 	# install encoding tools
 	ffmpeg \
 	# install extraction tools
@@ -59,9 +59,7 @@ RUN apt update \
 	# clean up previously installed SPC
 	&& apt purge -y software-properties-common \
 	# clean up the container "layer", after we are done
-	&& rm -rf /var/lib/apt/lists /var/cache/apt/archives /tmp \
-	# install requirements, inside the container
-	&& pip3 install --no-cache-dir -r requirements.txt
+	&& rm -rf /var/lib/apt/lists /var/cache/apt/archives /tmp
 
 # each instruction creates one layer
 # Only the instructions RUN, COPY, ADD create layers.
@@ -70,7 +68,7 @@ RUN apt update \
 # adds files from your Docker client’s current directory.
 COPY . /app/
 
-# set workdir
+# Set working directory
 WORKDIR /app
 
 # specifies what command to run within the container.

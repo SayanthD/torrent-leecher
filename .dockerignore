@@ -5,7 +5,7 @@ config.py
 __pycache__
 *.session
 *.log
-*.conf
+rclone.conf
 Pipfile*
 Dockerfile
 COPYING
