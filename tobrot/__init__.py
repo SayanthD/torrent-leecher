@@ -7,6 +7,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import time
+import aria2p
 
 # the secret configuration specific things
 if os.path.exists(
@@ -19,6 +20,13 @@ if os.path.exists(
 else:
     from tobrot.sample_config import Config
 
+aria2 = aria2p.API(
+    aria2p.Client(
+        host="http://localhost",
+        port=6800,
+        secret=""
+    )
+)
 
 # TODO: is there a better way?
 TG_BOT_TOKEN = Config.TG_BOT_TOKEN

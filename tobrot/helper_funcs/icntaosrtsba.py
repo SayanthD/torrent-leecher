@@ -22,12 +22,12 @@ from pyrogram.types import (
     Message
 )
 from tobrot import (
+    aria2,
     LOGGER,
     DOWNLOAD_LOCATION
 )
 from tobrot.helper_funcs.download_aria_p_n import (
     call_apropriate_function,
-    aria_start,
     fake_etairporpa_call
 )
 from tobrot.helper_funcs.extract_link_from_message import extract_link
@@ -53,14 +53,11 @@ async def leech_btn_k(message: Message, cb_data: str):
         os.makedirs(new_download_location)
     if dl_url is not None:
         await message.edit_text("extracting links")
-        # start the aria2c daemon
-        aria_i_p = await aria_start()
-        LOGGER.info(aria_i_p)
         if "_" in cb_data:
             await message.edit_text("trying to download")
             # try to download the "link"
             sagtus, err_message = await fake_etairporpa_call(
-                aria_i_p,
+                aria2,
                 dl_url,
                 new_download_location,
                 message,
@@ -78,7 +75,7 @@ async def leech_btn_k(message: Message, cb_data: str):
             await message.edit_text("trying to download")
             # try to download the "link"
             sagtus, err_message = await call_apropriate_function(
-                aria_i_p,
+                aria2,
                 dl_url,
                 new_download_location,
                 message,
