@@ -37,14 +37,14 @@ async def status_message_f(client, message):
     #
     msg = ""
     for download in downloads:
-        msg += f"<u>{download.name}</u> |" \
-            f"{download.total_length_string()} |" \
-            f"{download.progress_string()} |" \
-            f"{DOWNLOAD_ICON} {download.download_speed_string()} |" \
-            f"{UPLOAD_ICON} {download.upload_speed_string()} |" \
-            f"{download.eta_string()}" \
-            f"{download.status} |" \
-            f"<code>{Commandi.CANCEL} {download.gid}</code> |"
+        msg += f"<u>{download.name}</u> | " \
+            f"{download.total_length_string()} | " \
+            f"{download.progress_string()} | " \
+            f"{DOWNLOAD_ICON} {download.download_speed_string()} | " \
+            f"{UPLOAD_ICON} {download.upload_speed_string()} | " \
+            f"{download.eta_string()} | " \
+            f"{download.status} | " \
+            f"<code>/{Commandi.CANCEL} {download.gid}</code>"
         msg += "\n\n"
     # LOGGER.info(msg)
 
@@ -56,7 +56,7 @@ async def status_message_f(client, message):
 
     ms_g = f"<b>Bot Uptime</b>: <code>{currentTime}</code>\n" \
         f"<b>Total disk space</b>: <code>{humanbytes(total)}</code>\n" \
-        f"<b>Used</b>: <code>{humanbytes(used)}</code>\n" \
+        f"<b>Used</b>: <code>{humanbytes(used)}</code>\t" \
         f"<b>Free</b>: <code>{humanbytes(free)}</code>\n"
 
     msg = ms_g + "\n" + msg
