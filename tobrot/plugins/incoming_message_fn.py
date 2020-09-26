@@ -22,9 +22,10 @@ from tobrot import (
 import time
 import aria2p
 import asyncio
+from tobrot import aria2
 from tobrot.helper_funcs.extract_link_from_message import extract_link
 from tobrot.helper_funcs.download_aria_p_n import (
-    call_apropriate_function, aria_start,
+    call_apropriate_function,
     fake_etairporpa_call
 )
 from tobrot.helper_funcs.download_from_link import request_download
@@ -40,9 +41,8 @@ async def incoming_purge_message_f(client, message):
     """/purge command"""
     i_m_sefg2 = await message.reply_text("Purging...", quote=True)
     if await AdminCheck(client, message.chat.id, message.from_user.id):
-        aria_i_p = await aria_start()
         try:
-            aria_i_p.remove_all(force=True)
+            aria2.remove_all(force=True)
             await i_m_sefg2.edit_text("Purged!")
         except False:
             await i_m_sefg2.edit_text("Purge failed")
@@ -73,9 +73,6 @@ async def leech_commandi_f(client, message):
     LOGGER.info(cf_name)
     if dl_url is not None:
         await m_.edit_text("extracting links")
-        # start the aria2c daemon
-        aria_i_p = await aria_start()
-        LOGGER.info(aria_i_p)
         current_user_id = message.reply_to_message.from_user.id
         # create an unique directory
         new_download_location = os.path.join(
@@ -90,7 +87,7 @@ async def leech_commandi_f(client, message):
             await m_.edit_text("trying to download")
             # try to download the "link"
             sagtus, err_message = await fake_etairporpa_call(
-                aria_i_p,
+                aria2,
                 dl_url,
                 new_download_location,
                 m_,
@@ -108,7 +105,7 @@ async def leech_commandi_f(client, message):
             await m_.edit_text("trying to download")
             # try to download the "link"
             sagtus, err_message = await call_apropriate_function(
-                aria_i_p,
+                aria2,
                 dl_url,
                 new_download_location,
                 m_,

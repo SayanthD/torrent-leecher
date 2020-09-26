@@ -10,13 +10,11 @@ import sys
 import time
 import traceback
 from tobrot import (
+    aria2,
     BOT_START_TIME,
     LOGGER,
     LOG_FILE_ZZGEVC,
     MAX_MESSAGE_LENGTH
-)
-from tobrot.helper_funcs.download_aria_p_n import (
-    aria_start
 )
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
 from tobrot.dinmamoc import Commandi
@@ -28,9 +26,8 @@ from tobrot.helper_funcs.display_progress import (
 
 
 async def status_message_f(client, message):
-    aria_i_p = await aria_start()
     # Show All Downloads
-    downloads = aria_i_p.get_downloads()
+    downloads = aria2.get_downloads()
     #
     DOWNLOAD_ICON = "📥"
     UPLOAD_ICON = "📤"
@@ -71,11 +68,10 @@ async def cancel_message_f(client, message):
             Loilacaztion.PROCESSING,
             quote=True
         )
-        aria_i_p = await aria_start()
         g_id = message.command[1].strip()
         LOGGER.info(g_id)
         try:
-            downloads = aria_i_p.get_download(g_id)
+            downloads = aria2.get_download(g_id)
             LOGGER.info(downloads)
             LOGGER.info(downloads.remove(force=True, files=True))
             await i_m_s_e_g.edit_text(

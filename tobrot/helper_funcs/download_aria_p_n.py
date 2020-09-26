@@ -15,10 +15,7 @@ from tobrot.helper_funcs.create_compressed_archive import create_archive
 from tobrot.helper_funcs.run_shell_command import run_command
 
 from tobrot import (
-    ARIA_TWO_STARTED_PORT,
-    MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START,
     AUTH_CHANNEL,
-    DOWNLOAD_LOCATION,
     EDIT_SLEEP_TIME_OUT,
     R_CLONE_CONF_URI,
     R_CLONE_DEST
@@ -27,40 +24,6 @@ from tobrot.helper_funcs.r_clone import (
     get_r_clone_config,
     copy_via_rclone
 )
-
-
-async def aria_start():
-    aria2_daemon_start_cmd = []
-    # start the daemon, aria2c command
-    aria2_daemon_start_cmd.append("aria2c")
-    # aria2_daemon_start_cmd.append("--allow-overwrite=true")
-    aria2_daemon_start_cmd.append("--daemon=true")
-    # aria2_daemon_start_cmd.append(f"--dir={DOWNLOAD_LOCATION}")
-    # TODO: this does not work, need to investigate this.
-    # but for now, https://t.me/TrollVoiceBot?start=858
-    # maybe, :\ but https://t.me/c/1374712761/1142
-    aria2_daemon_start_cmd.append("--enable-rpc")
-    aria2_daemon_start_cmd.append("--rpc-listen-all=false")
-    aria2_daemon_start_cmd.append(f"--rpc-listen-port={ARIA_TWO_STARTED_PORT}")
-    aria2_daemon_start_cmd.append("--rpc-max-request-size=1024M")
-    aria2_daemon_start_cmd.append(f"--bt-stop-timeout={MAX_TIME_TO_WAIT_FOR_TORRENTS_TO_START}")
-    #
-    # added support for external config file
-    # now located at /app/aria2/aria2.conf
-    aria2_daemon_start_cmd.append("--conf-path=/app/aria2/aria2.conf")
-    #
-    LOGGER.info(aria2_daemon_start_cmd)
-    t_response, e_response = await run_command(aria2_daemon_start_cmd)
-    LOGGER.info(t_response)
-    LOGGER.info(e_response)
-    aria2 = aria2p.API(
-        aria2p.Client(
-            host="http://localhost",
-            port=ARIA_TWO_STARTED_PORT,
-            secret=""
-        )
-    )
-    return aria2
 
 
 def add_magnet(aria_instance, magnetic_link, c_file_name):

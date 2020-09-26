@@ -72,4 +72,4 @@ COPY . /app/
 WORKDIR /app
 
 # specifies what command to run within the container.
-CMD ["python3", "-m", "tobrot"]
+CMD ["bash", "torrent-leecher.sh"]
