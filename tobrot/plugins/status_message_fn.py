@@ -43,8 +43,9 @@ async def status_message_f(client, message):
             f"{DOWNLOAD_ICON} {download.download_speed_string()} | " \
             f"{UPLOAD_ICON} {download.upload_speed_string()} | " \
             f"{download.eta_string()} | " \
-            f"{download.status} | " \
-            f"<code>/{Commandi.CANCEL} {download.gid}</code>"
+            f"{download.status}"
+        if not download.is_complete:
+            msg += f"\n<code>/{Commandi.CANCEL} {download.gid}</code>"
         msg += "\n\n"
     # LOGGER.info(msg)
 
