@@ -111,34 +111,33 @@ async def extract_youtube_dl_formats(
                     )
                     if "drive.google.com" in url:
                         if format_id == "source":
-                            ikeyboard.row = [
+                            ikeyboard.row(
                                 InlineKeyboardButton(
                                     dipslay_str_uon,
                                     callback_data=(cb_string_video).encode("UTF-8"),
                                 )
-                            ]
+                            )
                     else:
                         if format_string and "audio only" not in format_string:
-                            ikeyboard.row = [
+                            ikeyboard.row(
                                 InlineKeyboardButton(
                                     dipslay_str_uon,
                                     callback_data=(cb_string_video).encode("UTF-8"),
                                 )
-                            ]
+                            )
                         else:
                             # special weird case :\
-                            ikeyboard.row = [
+                            ikeyboard.row(
                                 InlineKeyboardButton(
                                     "SVideo [" + "] ( " + approx_file_size + " )",
                                     callback_data=(cb_string_video).encode("UTF-8"),
                                 )
-                            ]
+                            )
                 if duration is not None:
                     cb_string_64 = "{}|{}|{}".format("audio", "64k", "mp3")
                     cb_string_128 = "{}|{}|{}".format("audio", "128k", "mp3")
                     cb_string = "{}|{}|{}".format("audio", "320k", "mp3")
                     ikeyboard.row(
-                        [
                             InlineKeyboardButton(
                                 "MP3 " + "(" + "64 kbps" + ")",
                                 callback_data=cb_string_64.encode("UTF-8"),
@@ -146,16 +145,13 @@ async def extract_youtube_dl_formats(
                             InlineKeyboardButton(
                                 "MP3 " + "(" + "128 kbps" + ")",
                                 callback_data=cb_string_128.encode("UTF-8"),
-                            ),
-                        ]
+                            )
                     )
                     ikeyboard.row(
-                        [
                             InlineKeyboardButton(
                                 "MP3 " + "(" + "320 kbps" + ")",
                                 callback_data=cb_string.encode("UTF-8"),
                             )
-                        ]
                     )
             else:
                 format_id = current_r_json["format_id"]
@@ -164,12 +160,11 @@ async def extract_youtube_dl_formats(
                     "video", format_id, format_ext, "DL"
                 )
                 ikeyboard.row(
-                    [
                         InlineKeyboardButton(
                             "SVideo", callback_data=(cb_string_video).encode("UTF-8")
                         )
-                    ]
                 )
+
             # TODO: :\
             break
         LOGGER.info(ikeyboard)

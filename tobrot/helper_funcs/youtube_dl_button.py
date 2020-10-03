@@ -17,7 +17,7 @@ import shutil
 import time
 from datetime import datetime
 
-from tobrot import DOWNLOAD_LOCATION, AUTH_CHANNEL, SHOULD_USE_BUTTONS
+from tobrot import DOWNLOAD_LOCATION, SHOULD_USE_BUTTONS
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
 from tobrot.helper_funcs.run_shell_command import run_command
 

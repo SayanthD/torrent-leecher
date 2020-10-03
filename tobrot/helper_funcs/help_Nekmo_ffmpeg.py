@@ -40,7 +40,7 @@ async def take_screen_shot(video_file, output_directory, ttl):
             stderr=asyncio.subprocess.PIPE,
         )
         # Wait for the subprocess to finish
-        t_response, e_response = await process.communicate()
+        await process.communicate()
     #
     if os.path.lexists(out_put_file_name):
         return out_put_file_name

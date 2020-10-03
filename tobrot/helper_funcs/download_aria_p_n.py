@@ -56,7 +56,6 @@ def add_torrent(aria_instance, torrent_file_path):
         return (
             False,
             "**FAILED** \n"
-            + str(e)
             + " \nPlease try other sources to get workable link",
         )
 
