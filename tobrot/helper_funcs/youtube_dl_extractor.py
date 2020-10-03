@@ -6,9 +6,9 @@ import asyncio
 from tobrot.helper_funcs.display_progress import humanbytes
 import json
 import os
+from pykeyboard import InlineKeyboard
 from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
+    InlineKeyboardButton
 )
 
 
@@ -65,7 +65,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
         # logger.info(response_json)
-        inline_keyboard = []
+        ikeyboard = InlineKeyboard()
         #
         thumb_image = DEF_THUMB_NAIL_VID_S
         #
@@ -104,10 +104,9 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                     cb_string_video = "{}|{}|{}|{}".format(
                         "video", format_id, format_ext, scneu
                     )
-                    ikeyboard = []
                     if "drive.google.com" in url:
                         if format_id == "source":
-                            ikeyboard = [
+                            ikeyboard.row = [
                                 InlineKeyboardButton(
                                     dipslay_str_uon,
                                     callback_data=(cb_string_video).encode("UTF-8")
@@ -115,7 +114,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                             ]
                     else:
                         if format_string is not None and "audio only" not in format_string:
-                            ikeyboard = [
+                            ikeyboard.row = [
                                 InlineKeyboardButton(
                                     dipslay_str_uon,
                                     callback_data=(cb_string_video).encode("UTF-8")
@@ -123,7 +122,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                             ]
                         else:
                             # special weird case :\
-                            ikeyboard = [
+                            ikeyboard.row = [
                                 InlineKeyboardButton(
                                     "SVideo [" +
                                     "] ( " +
@@ -131,18 +130,17 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                                     callback_data=(cb_string_video).encode("UTF-8")
                                 )
                             ]
-                    inline_keyboard.append(ikeyboard)
                 if duration is not None:
                     cb_string_64 = "{}|{}|{}".format("audio", "64k", "mp3")
                     cb_string_128 = "{}|{}|{}".format("audio", "128k", "mp3")
                     cb_string = "{}|{}|{}".format("audio", "320k", "mp3")
-                    inline_keyboard.append([
+                    ikeyboard.row([
                         InlineKeyboardButton(
                             "MP3 " + "(" + "64 kbps" + ")", callback_data=cb_string_64.encode("UTF-8")),
                         InlineKeyboardButton(
                             "MP3 " + "(" + "128 kbps" + ")", callback_data=cb_string_128.encode("UTF-8"))
                     ])
-                    inline_keyboard.append([
+                    ikeyboard.row([
                         InlineKeyboardButton(
                             "MP3 " + "(" + "320 kbps" + ")", callback_data=cb_string.encode("UTF-8"))
                     ])
@@ -152,7 +150,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                 cb_string_video = "{}|{}|{}|{}".format(
                     "video", format_id, format_ext, "DL"
                 )
-                inline_keyboard.append([
+                ikeyboard.row([
                     InlineKeyboardButton(
                         "SVideo",
                         callback_data=(cb_string_video).encode("UTF-8")
@@ -160,8 +158,7 @@ async def extract_youtube_dl_formats(url, yt_dl_user_name, yt_dl_pass_word, user
                 ])
             # TODO: :\
             break
-        reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        # LOGGER.info(reply_markup)
+        LOGGER.info(ikeyboard)
         succss_mesg = """Select the desired format: 👇
 <u>mentioned</u> <i>file size might be approximate</i>"""
-        return thumb_image, succss_mesg, reply_markup
+        return thumb_image, succss_mesg, ikeyboard

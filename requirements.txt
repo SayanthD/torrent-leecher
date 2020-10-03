@@ -2,6 +2,7 @@ aiohttp
 aria2p
 hachoir
 Pillow
+pykeyboard
 pyrogram
 tgcrypto
 youtube-dlc
