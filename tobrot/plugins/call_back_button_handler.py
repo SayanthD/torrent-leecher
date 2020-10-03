@@ -4,18 +4,15 @@
 
 # the logging things
 import logging
+
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
 
 from pyrogram.types import CallbackQuery
 from tobrot.helper_funcs.youtube_dl_button import youtube_dl_call_back
-from tobrot.helper_funcs.icntaosrtsba import (
-    leech_btn_k,
-    ytdl_btn_k
-)
+from tobrot.helper_funcs.icntaosrtsba import leech_btn_k, ytdl_btn_k
 
 
 async def button(bot, update: CallbackQuery):

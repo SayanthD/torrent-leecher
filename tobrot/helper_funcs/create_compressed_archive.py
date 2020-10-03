@@ -4,9 +4,9 @@
 
 # the logging things
 import logging
+
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
 
@@ -23,14 +23,14 @@ async def create_archive(input_directory):
         # #BlameTelegram
         suffix_extention_length = 1 + 3 + 1 + 2
         if len(base_dir_name) > (64 - suffix_extention_length):
-            compressed_file_name = base_dir_name[0:(64 - suffix_extention_length)]
+            compressed_file_name = base_dir_name[0: (64 - suffix_extention_length)]
             compressed_file_name += ".tar.gz"
         # fix for https://t.me/c/1434259219/13344
         file_generator_command = [
             "tar",
             "-zcvf",
             compressed_file_name,
-            f"{input_directory}"
+            f"{input_directory}",
         ]
         t_response, e_response = await run_command(file_generator_command)
         # Wait for the subprocess to finish

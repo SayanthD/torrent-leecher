@@ -9,20 +9,11 @@ import shutil
 import sys
 import time
 import traceback
-from tobrot import (
-    aria2,
-    BOT_START_TIME,
-    LOGGER,
-    LOG_FILE_ZZGEVC,
-    MAX_MESSAGE_LENGTH
-)
+from tobrot import aria2, BOT_START_TIME, LOGGER, LOG_FILE_ZZGEVC, MAX_MESSAGE_LENGTH
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
 from tobrot.dinmamoc import Commandi
 from tobrot.amocmadin import Loilacaztion
-from tobrot.helper_funcs.display_progress import (
-    time_formatter,
-    humanbytes
-)
+from tobrot.helper_funcs.display_progress import time_formatter, humanbytes
 
 
 async def status_message_f(client, message):
@@ -34,13 +25,15 @@ async def status_message_f(client, message):
     #
     msg = ""
     for download in downloads:
-        msg += f"<u>{download.name}</u> | " \
-            f"{download.total_length_string()} | " \
-            f"{download.progress_string()} | " \
-            f"{DOWNLOAD_ICON} {download.download_speed_string()} | " \
-            f"{UPLOAD_ICON} {download.upload_speed_string()} | " \
-            f"{download.eta_string()} | " \
+        msg += (
+            f"<u>{download.name}</u> | "
+            f"{download.total_length_string()} | "
+            f"{download.progress_string()} | "
+            f"{DOWNLOAD_ICON} {download.download_speed_string()} | "
+            f"{UPLOAD_ICON} {download.upload_speed_string()} | "
+            f"{download.eta_string()} | "
             f"{download.status}"
+        )
         if not download.is_complete:
             msg += f"\n<code>/{Commandi.CANCEL} {download.gid}</code>"
         msg += "\n\n"
@@ -52,10 +45,12 @@ async def status_message_f(client, message):
     currentTime = time_formatter((time.time() - BOT_START_TIME))
     total, used, free = shutil.disk_usage(".")
 
-    ms_g = f"<b>Bot Uptime</b>: <code>{currentTime}</code>\n" \
-        f"<b>Total disk space</b>: <code>{humanbytes(total)}</code>\n" \
-        f"<b>Used</b>: <code>{humanbytes(used)}</code>\t" \
+    ms_g = (
+        f"<b>Bot Uptime</b>: <code>{currentTime}</code>\n"
+        f"<b>Total disk space</b>: <code>{humanbytes(total)}</code>\n"
+        f"<b>Used</b>: <code>{humanbytes(used)}</code>\t"
         f"<b>Free</b>: <code>{humanbytes(free)}</code>\n"
+    )
 
     msg = ms_g + "\n" + msg
     await message.reply_text(msg, quote=True)
@@ -64,24 +59,17 @@ async def status_message_f(client, message):
 async def cancel_message_f(client, message):
     if len(message.command) > 1:
         # /cancel command
-        i_m_s_e_g = await message.reply_text(
-            Loilacaztion.PROCESSING,
-            quote=True
-        )
+        i_m_s_e_g = await message.reply_text(Loilacaztion.PROCESSING, quote=True)
         g_id = message.command[1].strip()
         LOGGER.info(g_id)
         try:
             downloads = aria2.get_download(g_id)
             LOGGER.info(downloads)
             LOGGER.info(downloads.remove(force=True, files=True))
-            await i_m_s_e_g.edit_text(
-                Loilacaztion.TOR_CANCELLED
-            )
+            await i_m_s_e_g.edit_text(Loilacaztion.TOR_CANCELLED)
         except Exception as e:
             LOGGER.warn(str(e))
-            await i_m_s_e_g.edit_text(
-                Loilacaztion.TOR_CANCEL_FAILED
-            )
+            await i_m_s_e_g.edit_text(Loilacaztion.TOR_CANCEL_FAILED)
     else:
         await message.delete()
 
@@ -97,9 +85,7 @@ async def exec_message_f(client, message):
 
     # start_time = time.time() + PROCESS_RUN_TIME
     process = await asyncio.create_subprocess_shell(
-        cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
     e = stderr.decode()
@@ -109,12 +95,14 @@ async def exec_message_f(client, message):
     if not o:
         o = "😐"
     OUTPUT = ""
-    OUTPUT += "<b>EXEC:</b>\n" \
-        f"<u>Command:</u> <code>{cmd}</code>\n" \
-        f"<u>PID</u>: <code>{process.pid}</code>\n" \
-        f"<b>stderr:</b>\n<code>{e}</code>\n" \
-        f"<b>stdout:</b>\n<code>{o}</code>\n" \
+    OUTPUT += (
+        "<b>EXEC:</b>\n"
+        f"<u>Command:</u> <code>{cmd}</code>\n"
+        f"<u>PID</u>: <code>{process.pid}</code>\n"
+        f"<b>stderr:</b>\n<code>{e}</code>\n"
+        f"<b>stdout:</b>\n<code>{o}</code>\n"
         f"<b>return:</b> <code>{process.returncode}</code>"
+    )
 
     if len(OUTPUT) > MAX_MESSAGE_LENGTH:
         with open("exec.text", "w+", encoding="utf8") as out_file:
@@ -124,7 +112,7 @@ async def exec_message_f(client, message):
             document="exec.text",
             caption=cmd,
             disable_notification=True,
-            reply_to_message_id=reply_to_id
+            reply_to_message_id=reply_to_id,
         )
         os.remove("exec.text")
         await message.delete()
@@ -133,16 +121,11 @@ async def exec_message_f(client, message):
 
 
 async def upload_document_f(client, message):
-    imsegd = await message.reply_text(
-        Loilacaztion.PROCESSING
-    )
+    imsegd = await message.reply_text(Loilacaztion.PROCESSING)
     if " " in message.text:
         recvd_command, local_file_name = message.text.split(" ", 1)
         recvd_response = await upload_to_tg(
-            imsegd,
-            local_file_name,
-            message.from_user.id,
-            {}
+            imsegd, local_file_name, message.from_user.id, {}
         )
         LOGGER.info(recvd_response)
     await imsegd.delete()
@@ -155,22 +138,18 @@ async def save_rclone_conf_f(client, message):
         r_clone_conf_uri = f"https://t.me/PublicLeech/{message.chat.id}/{message.reply_to_message.message_id}"
     elif chat_type in ["supergroup", "channel"]:
         if message.chat.username:
-            r_clone_conf_uri = "please DO NOT upload confidential credentials, in a public group."
+            r_clone_conf_uri = (
+                "please DO NOT upload confidential credentials, in a public group."
+            )
         else:
             r_clone_conf_uri = f"https://t.me/c/{str(message.reply_to_message.chat.id)[4:]}/{message.reply_to_message.message_id}"
     else:
         r_clone_conf_uri = "unknown chat_type"
-    await message.reply_text(
-        "<code>"
-        f"{r_clone_conf_uri}"
-        "</code>"
-    )
+    await message.reply_text("<code>" f"{r_clone_conf_uri}" "</code>")
 
 
 async def upload_log_file(client, message):
-    await message.reply_document(
-        LOG_FILE_ZZGEVC
-    )
+    await message.reply_document(LOG_FILE_ZZGEVC)
 
 
 async def eval_message_f(client, message):
@@ -211,10 +190,7 @@ async def eval_message_f(client, message):
     if len(final_output) > MAX_MESSAGE_LENGTH:
         with open("eval.text", "w+", encoding="utf8") as out_file:
             out_file.write(str(final_output))
-        await ismgese.reply_document(
-            document="eval.text",
-            caption=cmd
-        )
+        await ismgese.reply_document(document="eval.text", caption=cmd)
         os.remove("eval.text")
         await ismgese.delete()
     else:
@@ -223,7 +199,7 @@ async def eval_message_f(client, message):
 
 async def aexec(code, client, message):
     exec(
-        'async def __aexec(client, message): ' +
-        ''.join(f'\n {line}' for line in code.split('\n'))
+        "async def __aexec(client, message): "
+        + "".join(f"\n {line}" for line in code.split("\n"))
     )
-    return await locals()['__aexec'](client, message)
+    return await locals()["__aexec"](client, message)

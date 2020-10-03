@@ -4,9 +4,9 @@
 
 # the logging things
 import logging
+
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
@@ -14,9 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 import os
 
-from tobrot import (
-    DOWNLOAD_LOCATION
-)
+from tobrot import DOWNLOAD_LOCATION
 
 
 import time
@@ -26,7 +24,7 @@ from tobrot import aria2
 from tobrot.helper_funcs.extract_link_from_message import extract_link
 from tobrot.helper_funcs.download_aria_p_n import (
     call_apropriate_function,
-    fake_etairporpa_call
+    fake_etairporpa_call,
 )
 from tobrot.helper_funcs.download_from_link import request_download
 from tobrot.helper_funcs.display_progress import progress_for_pyrogram
@@ -52,23 +50,14 @@ async def incoming_message_f(client, message):
     """/leech command"""
     i_m_sefg = await message.reply_text("checking ", quote=True)
     t_, rm_ = await get_markup(message)
-    await i_m_sefg.edit_text(
-        text=t_,
-        reply_markup=rm_,
-        disable_web_page_preview=True
-    )
+    await i_m_sefg.edit_text(text=t_, reply_markup=rm_, disable_web_page_preview=True)
 
 
 async def leech_commandi_f(client, message):
-    m_ = await message.reply_text(
-        "checking",
-        quote=True
-    )
+    m_ = await message.reply_text("checking", quote=True)
     m_sgra = " ".join(message.command[1:])
     # get link from the incoming message
-    dl_url, cf_name, _, _ = await extract_link(
-        message.reply_to_message, "LEECH"
-    )
+    dl_url, cf_name, _, _ = await extract_link(message.reply_to_message, "LEECH")
     LOGGER.info(dl_url)
     LOGGER.info(cf_name)
     if dl_url is not None:
@@ -78,7 +67,7 @@ async def leech_commandi_f(client, message):
         new_download_location = os.path.join(
             DOWNLOAD_LOCATION,
             str(current_user_id),
-            str(message.reply_to_message.message_id)
+            str(message.reply_to_message.message_id),
         )
         # create download directory, if not exist
         if not os.path.isdir(new_download_location):
@@ -105,11 +94,7 @@ async def leech_commandi_f(client, message):
             await m_.edit_text("trying to download")
             # try to download the "link"
             sagtus, err_message = await call_apropriate_function(
-                aria2,
-                dl_url,
-                new_download_location,
-                m_,
-                is_zip
+                aria2, dl_url, new_download_location, m_, is_zip
             )
             if not sagtus:
                 # if FAILED, display the error message
@@ -131,9 +116,7 @@ async def incoming_youtube_dl_f(client, message):
         current_user_id = message.from_user.id
         # create an unique directory
         user_working_dir = os.path.join(
-            DOWNLOAD_LOCATION,
-            str(current_user_id),
-            str(message.message_id)
+            DOWNLOAD_LOCATION, str(current_user_id), str(message.message_id)
         )
         # create download directory, if not exist
         if not os.path.isdir(user_working_dir):
@@ -144,26 +127,20 @@ async def incoming_youtube_dl_f(client, message):
             # cf_name,
             yt_dl_user_name,
             yt_dl_pass_word,
-            user_working_dir
+            user_working_dir,
         )
         if thumb_image is not None:
-            thumb_image = await proc_ess_image_aqon(
-                thumb_image,
-                user_working_dir
-            )
+            thumb_image = await proc_ess_image_aqon(thumb_image, user_working_dir)
             await message.reply_photo(
                 photo=thumb_image,
                 quote=True,
                 caption=text_message,
-                reply_markup=reply_markup
+                reply_markup=reply_markup,
             )
             os.remove(thumb_image)
             await i_m_sefg.delete()
         else:
-            await i_m_sefg.edit_text(
-                text=text_message,
-                reply_markup=reply_markup
-            )
+            await i_m_sefg.edit_text(text=text_message, reply_markup=reply_markup)
     else:
         await i_m_sefg.edit_text(
             "**FCUK**! wat have you entered. \nPlease read /help \n"

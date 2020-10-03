@@ -10,23 +10,18 @@ import time
 import aria2p
 
 # the secret configuration specific things
-if os.path.exists(
-    os.path.join(
-        __name__,
-        "config.py"
-    )
-):
+if os.path.exists(os.path.join(__name__, "config.py")):
     from tobrot.config import Config
 else:
     from tobrot.sample_config import Config
 
 aria2 = aria2p.API(
-    aria2p.Client(
-        host="http://localhost",
-        port=6800,
-        secret=""
-    )
-)
+        aria2p.Client(
+            host="http://localhost",
+            port=6800,
+            secret=""
+            )
+        )
 
 # TODO: is there a better way?
 TG_BOT_TOKEN = Config.TG_BOT_TOKEN
@@ -67,12 +62,10 @@ logging.basicConfig(
     datefmt="%d-%b-%y %H:%M:%S",
     handlers=[
         RotatingFileHandler(
-            LOG_FILE_ZZGEVC,
-            maxBytes=FREE_USER_MAX_FILE_SIZE,
-            backupCount=10
+            LOG_FILE_ZZGEVC, maxBytes=FREE_USER_MAX_FILE_SIZE, backupCount=10
         ),
-        logging.StreamHandler()
-    ]
+        logging.StreamHandler(),
+    ],
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 logging.getLogger("PIL.Image").setLevel(logging.WARNING)

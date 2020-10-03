@@ -4,9 +4,9 @@
 
 # the logging things
 import logging
+
 logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
 
@@ -17,11 +17,7 @@ import shutil
 import time
 from datetime import datetime
 
-from tobrot import (
-    DOWNLOAD_LOCATION,
-    AUTH_CHANNEL,
-    SHOULD_USE_BUTTONS
-)
+from tobrot import DOWNLOAD_LOCATION, AUTH_CHANNEL, SHOULD_USE_BUTTONS
 from tobrot.helper_funcs.upload_to_tg import upload_to_tg
 from tobrot.helper_funcs.run_shell_command import run_command
 
@@ -38,9 +34,7 @@ async def youtube_dl_call_back(bot, update):
     current_touched_user_id = update.from_user.id
 
     user_working_dir = os.path.join(
-        DOWNLOAD_LOCATION,
-        str(current_user_id),
-        str(current_message_id)
+        DOWNLOAD_LOCATION, str(current_user_id), str(current_message_id)
     )
     # create download directory, if not exist
     if not os.path.isdir(user_working_dir):
@@ -50,11 +44,10 @@ async def youtube_dl_call_back(bot, update):
                 update.message.message_id,
                 update.message.reply_to_message.message_id,
             ],
-            revoke=True
+            revoke=True,
         )
         return
-    save_ytdl_json_path = user_working_dir + \
-        "/" + str("ytdleech") + ".json"
+    save_ytdl_json_path = user_working_dir + "/" + str("ytdleech") + ".json"
     try:
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
@@ -66,7 +59,7 @@ async def youtube_dl_call_back(bot, update):
                 update.message.message_id,
                 update.message.reply_to_message.message_id,
             ],
-            revoke=True
+            revoke=True,
         )
         return False
     #
@@ -81,9 +74,7 @@ async def youtube_dl_call_back(bot, update):
     # https://superuser.com/a/994060
     LOGGER.info(custom_file_name)
     #
-    await update.message.edit_caption(
-        caption="trying to download"
-    )
+    await update.message.edit_caption(caption="trying to download")
     description = "@PublicLeech"
     if "fulltitle" in response_json:
         fulltitle = response_json["fulltitle"][0:1021]
@@ -94,10 +85,7 @@ async def youtube_dl_call_back(bot, update):
     #
     tmp_directory_for_each_user = user_working_dir
     download_directory = tmp_directory_for_each_user
-    download_directory = os.path.join(
-        tmp_directory_for_each_user,
-        custom_file_name
-    )
+    download_directory = os.path.join(tmp_directory_for_each_user, custom_file_name)
     command_to_exec = []
     if tg_send_type == "audio":
         command_to_exec = [
@@ -105,10 +93,13 @@ async def youtube_dl_call_back(bot, update):
             "-c",
             "--prefer-ffmpeg",
             "--extract-audio",
-            "--audio-format", youtube_dl_ext,
-            "--audio-quality", youtube_dl_format,
+            "--audio-format",
+            youtube_dl_ext,
+            "--audio-quality",
+            youtube_dl_format,
             youtube_dl_url,
-            "-o", download_directory,
+            "-o",
+            download_directory,
             # "--external-downloader", "aria2c"
         ]
     else:
@@ -130,9 +121,12 @@ async def youtube_dl_call_back(bot, update):
             "youtube-dlc",
             "-c",
             "--embed-subs",
-            "-f", minus_f_format,
-            "--hls-prefer-ffmpeg", youtube_dl_url,
-            "-o", download_directory,
+            "-f",
+            minus_f_format,
+            "--hls-prefer-ffmpeg",
+            youtube_dl_url,
+            "-o",
+            download_directory,
             # "--external-downloader", "aria2c"
         ]
     #
@@ -152,9 +146,7 @@ async def youtube_dl_call_back(bot, update):
     ad_string_to_replace = "please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output."
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
-        await update.message.edit_caption(
-            caption=error_message
-        )
+        await update.message.edit_caption(caption=error_message)
         return False, None
     if t_response:
         # LOGGER.info(t_response)
@@ -165,17 +157,12 @@ async def youtube_dl_call_back(bot, update):
         # dir_contents.sort()
         await update.message.edit_caption(
             caption=f"Download completed in {time_taken_for_download} seconds"
-                    f"\nfound {dir_contents} file(s)"
+            f"\nfound {dir_contents} file(s)"
         )
         user_id = update.from_user.id
         #
         final_response = await upload_to_tg(
-            update.message,
-            tmp_directory_for_each_user,
-            user_id,
-            {},
-            True,
-            fulltitle
+            update.message, tmp_directory_for_each_user, user_id, {}, True, fulltitle
         )
         LOGGER.info(final_response)
         #

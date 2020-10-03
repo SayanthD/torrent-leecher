@@ -7,13 +7,9 @@ from tobrot.amocmadin import Loilacaztion
 
 
 async def save_thumb_nail(_, message):
-    thumbnail_location = os.path.join(
-        DOWNLOAD_LOCATION,
-        "thumbnails"
-    )
+    thumbnail_location = os.path.join(DOWNLOAD_LOCATION, "thumbnails")
     thumb_image_path = os.path.join(
-        thumbnail_location,
-        str(message.from_user.id) + ".jpg"
+        thumbnail_location, str(message.from_user.id) + ".jpg"
     )
     ismgs = await message.reply_text(Loilacaztion.PROCESSING)
     if message.reply_to_message is not None:
@@ -24,9 +20,7 @@ async def save_thumb_nail(_, message):
             file_name=download_location
         )
         # https://stackoverflow.com/a/21669827/4723940
-        Image.open(downloaded_file_name).convert(
-            "RGB"
-        ).save(downloaded_file_name)
+        Image.open(downloaded_file_name).convert("RGB").save(downloaded_file_name)
         # ref: https://t.me/PyrogramChat/44663
         img = Image.open(downloaded_file_name)
         img.save(thumb_image_path, "JPEG")
@@ -37,13 +31,9 @@ async def save_thumb_nail(_, message):
 
 
 async def clear_thumb_nail(_, message):
-    thumbnail_location = os.path.join(
-        DOWNLOAD_LOCATION,
-        "thumbnails"
-    )
+    thumbnail_location = os.path.join(DOWNLOAD_LOCATION, "thumbnails")
     thumb_image_path = os.path.join(
-        thumbnail_location,
-        str(message.from_user.id) + ".jpg"
+        thumbnail_location, str(message.from_user.id) + ".jpg"
     )
     ismgs = await message.reply_text(Loilacaztion.PROCESSING)
     if os.path.exists(thumb_image_path):

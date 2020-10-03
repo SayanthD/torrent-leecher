@@ -4,9 +4,9 @@
 
 # the logging things
 import logging
+
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 LOGGER = logging.getLogger(__name__)
@@ -17,23 +17,13 @@ import time
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
-from pyrogram.types import (
-    InputMediaDocument,
-    InputMediaVideo,
-    InputMediaAudio
-)
-from tobrot.helper_funcs.display_progress import (
-    progress_for_pyrogram,
-    humanbytes
-)
+from pyrogram.types import InputMediaDocument, InputMediaVideo, InputMediaAudio
+from tobrot.helper_funcs.display_progress import progress_for_pyrogram, humanbytes
 from tobrot.helper_funcs.help_Nekmo_ffmpeg import take_screen_shot
 from tobrot.helper_funcs.split_large_files import split_large_files
 from tobrot.helper_funcs.copy_similar_file import copy_file
-from tobrot import (
-    TG_MAX_FILE_SIZE,
-    EDIT_SLEEP_TIME_OUT,
-    DOWNLOAD_LOCATION
-)
+from tobrot import TG_MAX_FILE_SIZE, EDIT_SLEEP_TIME_OUT, DOWNLOAD_LOCATION
+
 
 async def upload_to_tg(
     message,
@@ -41,7 +31,7 @@ async def upload_to_tg(
     from_user,
     dict_contatining_uploaded_files,
     edit_media=False,
-    custom_caption=None
+    custom_caption=None,
 ):
     LOGGER.info(local_file_name)
     base_file_name = os.path.basename(local_file_name)
@@ -77,7 +67,7 @@ async def upload_to_tg(
                 from_user,
                 dict_contatining_uploaded_files,
                 edit_media,
-                caption_str
+                caption_str,
             )
     else:
         if os.path.getsize(local_file_name) > TG_MAX_FILE_SIZE:
@@ -105,31 +95,29 @@ async def upload_to_tg(
                     message,
                     os.path.join(splitted_dir, le_file),
                     from_user,
-                    dict_contatining_uploaded_files
+                    dict_contatining_uploaded_files,
                 )
         else:
             sent_message = await upload_single_file(
-                message,
-                local_file_name,
-                caption_str,
-                from_user,
-                edit_media
+                message, local_file_name, caption_str, from_user, edit_media
             )
             if sent_message is not None:
-                dict_contatining_uploaded_files[os.path.basename(local_file_name)] = sent_message.message_id
+                dict_contatining_uploaded_files[
+                    os.path.basename(local_file_name)
+                ] = sent_message.message_id
     # await message.delete()
     return dict_contatining_uploaded_files
 
 
-async def upload_single_file(message, local_file_name, caption_str, from_user, edit_media):
+async def upload_single_file(
+    message, local_file_name, caption_str, from_user, edit_media
+):
     await asyncio.sleep(EDIT_SLEEP_TIME_OUT)
     sent_message = None
     start_time = time.time()
     #
     thumbnail_location = os.path.join(
-        DOWNLOAD_LOCATION,
-        "thumbnails",
-        str(from_user) + ".jpg"
+        DOWNLOAD_LOCATION, "thumbnails", str(from_user) + ".jpg"
     )
     LOGGER.info(thumbnail_location)
     #
@@ -143,7 +131,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
             metadata = extractMetadata(createParser(local_file_name))
             duration = 0
             if metadata.has("duration"):
-                duration = metadata.get('duration').seconds
+                duration = metadata.get("duration").seconds
             #
             width = 0
             height = 0
@@ -151,13 +139,13 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
             if os.path.exists(thumbnail_location):
                 thumb_image_path = await copy_file(
                     thumbnail_location,
-                    os.path.dirname(os.path.abspath(local_file_name))
+                    os.path.dirname(os.path.abspath(local_file_name)),
                 )
             else:
                 thumb_image_path = await take_screen_shot(
                     local_file_name,
                     os.path.dirname(os.path.abspath(local_file_name)),
-                    (duration / 2)
+                    (duration / 2),
                 )
                 # get the correct width, height, and duration for videos greater than 10MB
                 if os.path.exists(thumb_image_path):
@@ -169,9 +157,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                     # resize image
                     # ref: https://t.me/PyrogramChat/44663
                     # https://stackoverflow.com/a/21669827/4723940
-                    Image.open(thumb_image_path).convert(
-                        "RGB"
-                    ).save(thumb_image_path)
+                    Image.open(thumb_image_path).convert("RGB").save(thumb_image_path)
                     img = Image.open(thumb_image_path)
                     # https://stackoverflow.com/a/37631799/4723940
                     img.resize((320, height))
@@ -192,7 +178,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                         width=width,
                         height=height,
                         duration=duration,
-                        supports_streaming=True
+                        supports_streaming=True,
                     )
                     # quote=True,
                 )
@@ -213,8 +199,8 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                     progress_args=(
                         "trying to upload",
                         message_for_progress_display,
-                        start_time
-                    )
+                        start_time,
+                    ),
                 )
             if thumb is not None:
                 os.remove(thumb)
@@ -224,7 +210,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
             title = ""
             artist = ""
             if metadata.has("duration"):
-                duration = metadata.get('duration').seconds
+                duration = metadata.get("duration").seconds
             if metadata.has("title"):
                 title = metadata.get("title")
             if metadata.has("artist"):
@@ -233,7 +219,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
             if os.path.isfile(thumbnail_location):
                 thumb_image_path = await copy_file(
                     thumbnail_location,
-                    os.path.dirname(os.path.abspath(local_file_name))
+                    os.path.dirname(os.path.abspath(local_file_name)),
                 )
             thumb = None
             if thumb_image_path is not None and os.path.isfile(thumb_image_path):
@@ -248,7 +234,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                         parse_mode="html",
                         duration=duration,
                         performer=artist,
-                        title=title
+                        title=title,
                     )
                     # quote=True,
                 )
@@ -268,8 +254,8 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                     progress_args=(
                         "trying to upload",
                         message_for_progress_display,
-                        start_time
-                    )
+                        start_time,
+                    ),
                 )
             if thumb is not None:
                 os.remove(thumb)
@@ -278,7 +264,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
             if os.path.isfile(thumbnail_location):
                 thumb_image_path = await copy_file(
                     thumbnail_location,
-                    os.path.dirname(os.path.abspath(local_file_name))
+                    os.path.dirname(os.path.abspath(local_file_name)),
                 )
             # if a file, don't upload "thumb"
             # this "diff" is a major derp -_- 😔😭😭
@@ -293,7 +279,7 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                         media=local_file_name,
                         thumb=thumb,
                         caption=caption_str,
-                        parse_mode="html"
+                        parse_mode="html",
                     )
                     # quote=True,
                 )
@@ -310,8 +296,8 @@ async def upload_single_file(message, local_file_name, caption_str, from_user, e
                     progress_args=(
                         "trying to upload",
                         message_for_progress_display,
-                        start_time
-                    )
+                        start_time,
+                    ),
                 )
             if thumb is not None:
                 os.remove(thumb)
