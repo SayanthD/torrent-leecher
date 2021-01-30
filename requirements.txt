@@ -11,4 +11,4 @@ Pyrogram==1.0.7
 TgCrypto==1.2.1
 
 pykeyboard
-youtube-dlc
+yt-dlp
